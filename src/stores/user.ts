@@ -40,10 +40,10 @@ export const userStore = defineStore('user', () => {
   const fetchData = async () => {
     const res = await getUserInfo()
 
-    if (res.data.isLogin) {
+    if (res.value.isLogin) {
       userInfo.value = {
         ...userInfo.value,
-        ...res.data,
+        ...res.value,
       }
     }
     else {

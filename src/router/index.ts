@@ -1,4 +1,4 @@
-import { type NavigationGuardNext, type RouteLocationNormalized, createRouter, createWebHistory } from 'vue-router'
+import { type NavigationGuardNext, type RouteLocationNormalized, createRouter, createWebHashHistory } from 'vue-router'
 import { useCookies } from '@vueuse/integrations/useCookies'
 import { logout } from '@/utils/logout'
 import HomeViewVue from '@/views/HomeView.vue'
@@ -9,15 +9,15 @@ import DynamicFeedView from '@/views/DynamicFeedView.vue'
 import HistoryVideosView from '@/views/HistoryVideosView.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory(),
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'Home',
       component: HomeViewVue,
       children: [
         {
-          path: '/',
+          path: '/home',
           name: 'HomeRcmd',
           component: RcmdVideosView,
           meta: {
@@ -49,7 +49,7 @@ const router = createRouter({
     },
     {
       path: '/watch',
-      name: 'Wathc',
+      name: 'Wathch',
       component: () => import('@/views/WatchView.vue'),
     },
     {
@@ -63,6 +63,16 @@ const router = createRouter({
       component: () => import('@/views/SearchView.vue'),
     },
     {
+      path: '/login',
+      name: 'Login',
+      component: () => import('@/views/LoginView.vue'),
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: () => import('@/views/RegisterView.vue'),
+    },
+    {
       path: '/logout',
       name: 'Logout',
       redirect: '',
@@ -70,8 +80,7 @@ const router = createRouter({
         const { fetchData } = userStore()
         await logout()
         await fetchData()
-
-        next('/')
+        next('/home')
       },
     },
   ],

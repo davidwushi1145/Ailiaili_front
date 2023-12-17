@@ -5,22 +5,22 @@ import PopularIconVue from '@/components/atoms/icons/PopularIcon.vue'
 
 export const ASIDE_MENU = [
   {
-    title: 'Home',
+    title: '首页',
     icon: markRaw(HomeIconVue),
-    to: '/',
+    to: '/home',
   },
   {
-    title: 'Popular',
+    title: '热门',
     icon: markRaw(PopularIconVue),
     to: '/popular',
   },
   {
-    title: 'Dynamic',
+    title: '关注动态',
     icon: markRaw(DynamicIconVue),
     to: '/dynamic',
   },
   {
-    title: 'History',
+    title: '历史记录',
     icon: markRaw(HistoryIconVue),
     to: '/history',
   },
