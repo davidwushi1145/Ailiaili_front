@@ -32,7 +32,8 @@ async function login() {
     const encrypt = new JSEncrypt()
 
     // 设置公钥
-    encrypt.setPublicKey('MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCQk33iNdA8Iey7J6XrBsidqn6u8EDLWPHsfEUgLQ3qiTikhPKDTzZkpAfU/O0x6NvSKa7Dp0+uqWT3vnW1De0+3u8mCYdVfOdH94VG4xg5U5UrRJei8HhPiXuvKQ+6NBtebCCW5adZ4pBgOiU14cJLhVmm+dYiLo3IDD5LqrlomQIDAQAB')
+    const resPublicKey = await UserApiService.getRsaPublicKeyUsingGet()
+    encrypt.setPublicKey(resPublicKey.data as string)
 
     // 加密密码
     const encryptedPassword = encrypt.encrypt(userPassword.value)
@@ -48,7 +49,7 @@ async function login() {
       // 将 token 保存在 OpenAPI 对象中
       OpenAPI.TOKEN = res.data
       // 登录成功后，获取并设置用户信息
-      userStore().fetchData()
+      await userStore().fetchData()
       await router.push({ path: '/home' })
     }
   }

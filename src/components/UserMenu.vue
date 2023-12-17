@@ -33,7 +33,6 @@ function routeGoWithClose(path: string) {
       <UserInfoBox title="粉丝" :data="userInfo.follower" />
       <UserInfoBox title="动态" :data="userInfo.dynamic_count" />
       <UserInfoBox title="硬币" :data="userInfo.money" />
-      <UserInfoBox title="节操" :data="userInfo.moral" />
     </div>
     <div class="flex items-center justify-around mt-4 select-none">
       <span>LV{{ userInfo.level_info.current_level }}</span>

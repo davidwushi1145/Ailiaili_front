@@ -12,7 +12,7 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'Home',
       component: HomeViewVue,
       children: [
@@ -80,8 +80,7 @@ const router = createRouter({
         const { fetchData } = userStore()
         await logout()
         await fetchData()
-
-        next('/')
+        next('/home')
       },
     },
   ],
