@@ -1,6 +1,4 @@
-// This plugin is implemented from NPlayer/vue.
-// It will be deleted once the PR (https://github.com/oyuyue/nplayer/pull/637) is merged
-
+import { Danmaku } from '@nplayer/danmaku'
 import { h } from 'vue'
 import Player from 'nplayer'
 
@@ -17,13 +15,21 @@ const plugin = {
       props: {
         options: Object,
         set: Function,
+        danmaku: Object,
       },
       mounted() {
         if (!this.$refs.el || typeof document === 'undefined')
           return
-        if (!this.player)
-          this.player = new Player.Player(this.options)
+        let danmaku
+        if (this.danmaku)
+          danmaku = new Danmaku(this.danmaku)
 
+        if (!this.player) {
+          this.player = new Player.Player({
+            ...this.options,
+            plugins: [danmaku],
+          })
+        }
         this.player.mount(this.$refs.el)
         if (this.set)
           this.set(this.player)
