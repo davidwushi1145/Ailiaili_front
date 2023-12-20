@@ -1,22 +1,56 @@
 <script setup lang="ts">
-import type { Video } from '@/utils/api'
+// import type { Video } from '@/utils/api'
+import type { Ref } from 'vue'
+import {
+  DanmuApiService,
+  UserFollowingApiService,
+  type UserInfo,
+  type Video,
+  VideoApiService,
+} from '../../generated'
 import type { Reply } from '@/utils/getReply'
-import type { UserInfoCard } from '@/utils/getUserInfoCard'
 
 const route = useRoute()
 
 const aid = computed(() => String(route.query.aid))
-const { data: videoInfo } = useDataWithAid<Video, string>(aid, getVideoInfo)
-const { data: relatedVideos } = useDataWithAid<Video[], string>(aid, getVideoRelate)
+const videoInfo: Ref<Video> = ref({})
+const userInfo: Ref<UserInfo> = ref({})
+const views = ref(0)
+const danmaku = ref(0)
 const { data: replies, loadmore, isLoading } = useDataLoadmore<Reply>(getReply, false, aid)
+const videoOwnerID = computed(() => userInfo.value.id)
+const relatedVideos: Ref<Video[]> = ref([])
+const follower = ref(0)
 
-const videoOwnerID = computed(() => videoInfo.value?.owner.mid)
-
-const { data: videoOwnerInfoCard } = useDataWithAid<UserInfoCard, number | undefined>(videoOwnerID, getUserInfoCard)
-
-const views = computed(() => formatNumber(videoInfo.value?.stat.view))
-const danmaku = computed(() => formatNumber(videoInfo.value?.stat?.danmaku))
-const follower = computed(() => formatNumber(videoOwnerInfoCard.value?.follower))
+onMounted(async () => {
+  const res1 = await VideoApiService.getVideoDetailsUsingGet(Number(aid.value))
+  videoInfo.value = res1.data.video
+  userInfo.value = res1.data.userInfo
+  const res2 = await UserFollowingApiService.getFansUsingGet1(userInfo.value.userId)
+  if (res2.data !== undefined)
+    follower.value = res2.data.length
+  VideoApiService.addVideoViewUsingPost({
+    id: undefined,
+    videoId: videoInfo.value.id,
+    userId: userInfo.value.id,
+    clientId: undefined,
+    ip: undefined,
+    createTime: undefined,
+  })
+})
+onMounted(async () => {
+  const res1 = await VideoApiService.getVideoViewCountsUsingGet(Number(aid.value))
+  if (res1.data != null)
+    views.value = res1.data
+  const res2 = await DanmuApiService.getDanmusUsingGet(Number(aid.value))
+  if (res2.data !== undefined)
+    danmaku.value = res2.data?.length as number
+})
+onMounted(async () => {
+  const res = await VideoApiService.recommendUsingGet()
+  if (res.data !== undefined)
+    relatedVideos.value = res.data
+})
 
 useInfiniteScroll(
   window,
@@ -50,20 +84,20 @@ useInfiniteScroll(
         <div class="flex w-full my2">
           <RouterLink :to="`/space/${videoOwnerID}`">
             <ElImage
-              class="w-12 h-12 rounded-full hover:(cursor-pointer)" :src="videoInfo?.owner.face"
+              class="w-12 h-12 rounded-full hover:(cursor-pointer)" :src="userInfo.avatar"
               referrerpolicy="no-referrer"
             />
           </RouterLink>
           <div class="flex flex-col ml4">
             <RouterLink :to="`/space/${videoOwnerID}`">
-              <span class="text-lg hover:(cursor-pointer)">{{ videoInfo?.owner.name }}</span>
+              <span class="text-lg hover:(cursor-pointer)">{{ userInfo.nick }}</span>
             </RouterLink>
-            <span class="text-sm text-gray-600 opacity-40">{{ follower }} subscribers</span>
+            <span class="text-sm text-gray-600 opacity-40">{{ follower }} 关注数</span>
           </div>
         </div>
         <div class="w-full my2">
           <TextFeild class="text-gray-600 opacity-40">
-            {{ videoInfo?.desc }}
+            {{ videoInfo.description }}
           </TextFeild>
         </div>
       </div>
