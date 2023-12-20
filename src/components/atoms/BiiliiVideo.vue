@@ -50,7 +50,7 @@ async function initializePlayer() {
       defaultRes: 'SD',
     },
     autoplay: true,
-    licenseUrl: 'https://licen',
+    licenseUrl: 'https://',
   })
   tcplayerBarrage = new TcplayerBarragePlugin(player)
   tcplayerBarrage.init()
@@ -82,8 +82,27 @@ onMounted(async () => {
   if (url.value)
     await initializePlayer()
 })
-function sendDanmu() {
+async function sendDanmu() {
+  if (inputDanmu.value === '')
+    return
+  const danmu: Ref<Danmu> = ref({
+    content: inputDanmu.value,
+    createTime: undefined,
+    danmuTime: player.currentTime() * 1000,
+    id: undefined,
+    userId: undefined,
+    videoId: Number(props.aid),
+  })
+  const barrage = ref({
+    mode: 1,
+    text: inputDanmu.value,
+    size: 30,
+    color: '#ff0000',
+  })
+  // 即时发送弹幕
+  tcplayerBarrage.send(barrage.value)
   inputDanmu.value = ''
+  await DanmuApiService.addDanmuUsingPost(danmu.value)
 }
 </script>
 
