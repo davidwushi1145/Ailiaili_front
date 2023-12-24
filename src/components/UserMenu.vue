@@ -45,6 +45,10 @@ function routeGoWithClose(path: string) {
       <div class="w-5 h-5 i-lucide:log-out" />
       <span class="float-right ml-2">上传视频</span>
     </div>
+    <div class="flex flex-row items-center justify-start text-black rounded-md p2 cursor-pointer hover:(bg-light bg-opacity-70) active:(bg-light bg-opacity-70)" @click="routeGoWithClose('/editUserInfo')">
+      <div class="w-5 h-5 i-lucide:log-out" />
+      <span class="float-right ml-2">个人中心</span>
+    </div>
     <div class="flex flex-row items-center justify-start text-black rounded-md p2 cursor-pointer hover:(bg-light bg-opacity-70) active:(bg-light bg-opacity-70)" @click="routeGoWithClose('/logout')">
       <div class="w-5 h-5 i-lucide:log-out" />
       <span class="float-right ml-2">Logout</span>

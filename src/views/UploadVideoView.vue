@@ -278,7 +278,7 @@ async function fillVideo() {
               <el-form-item>
                 <el-button type="primary" @click="fillVideo">上传</el-button>
                 <el-button>取消</el-button>
-                <button @click="test">测试</button>
+
               </el-form-item>
             </el-form>
           </div>
