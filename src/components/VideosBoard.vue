@@ -15,7 +15,7 @@ const props = defineProps<{
       v-for="video in videos" :id="video.id as number"
       :key="video.id as number" :view="video.id as number" :pubdate="video.id as number"
       :pic="video.thumbnail as string" :owner-face="video.userInfo?.avatar" :owner-name="video.userInfo?.nick as string"
-      :owner-id="video.userId as number" :title="video.title as string"
+      :owner-id="video.userId as number" :title="video.title as string" :date="video.createTime"
     />
   </div>
 </template>
