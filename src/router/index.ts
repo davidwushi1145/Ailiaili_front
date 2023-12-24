@@ -88,6 +88,11 @@ const router = createRouter({
       name: 'UploadVideo',
       component: () => import('@/views/UploadVideoView.vue'),
     },
+    {
+      path: '/editUserInfo',
+      name: 'EditUserInfo',
+      component: () => import('@/views/EditUserInfoView.vue'),
+    },
   ],
 })
 
