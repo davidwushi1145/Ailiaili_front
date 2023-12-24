@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import type { Ref } from 'vue'
-import { UserApiService, type UserInfo, type Video, VideoApiService } from '../../generated'
+import {
+  UserApiService,
+  type UserFollowing,
+  UserFollowingApiService,
+  type UserInfo,
+  type Video,
+  VideoApiService,
+} from '../../generated'
 
 const route = useRoute()
 const mid = computed(() => Number.parseInt(`${route.params.mid}`))
 const userInfo: Ref<UserInfo> = ref({})
 const videos: Ref<Video[]> = ref([])
+const isFollow = ref(false)
 
 onMounted(async () => {
   const res1 = await UserApiService.getUserInfoByUserIdUsingGet(mid.value)
@@ -14,7 +22,31 @@ onMounted(async () => {
   const res2 = await VideoApiService.getVideosByUserIdUsingGet(mid.value)
   if (res2.data !== undefined)
     videos.value = res2.data
+  const res3 = await UserFollowingApiService.getIsFollowUsingGet(mid.value)
+  if (res3.data !== undefined)
+    isFollow.value = res3.data
 })
+async function addFollow() {
+  if (isFollow.value) {
+    await UserFollowingApiService.deleteFollowingUsingDelete(mid.value)
+  }
+  else {
+    const userFollowing: Ref<UserFollowing> = ref({
+      createTime: undefined,
+      followingId: mid,
+      groupId: undefined,
+      id: undefined,
+      updateTime: undefined,
+      userId: undefined,
+      userInfo: undefined,
+    })
+    await UserFollowingApiService.addUserFollowingsUsingPost(userFollowing.value)
+  }
+
+  const res3 = await UserFollowingApiService.getIsFollowUsingGet(mid.value)
+  if (res3.data !== undefined)
+    isFollow.value = res3.data
+}
 </script>
 
 <template>
@@ -25,9 +57,12 @@ onMounted(async () => {
         <span class="text-xl">{{ userInfo?.nick }}</span>
         <span class="text-lg text-gray-600 opacity-40 line-clamp-1">{{ userInfo?.sign }}</span>
       </div>
+      <div class="ml-10" @click="addFollow">
+        <img v-if="isFollow" src="../asset/已关注.png" alt="">
+        <img v-else src="../asset/关注.png" alt="">
+      </div>
     </div>
     <Divider class="w-full max-w-300" />
-    <!-- Cannot get user video from space because anti-crawler so use Rcmd Video replace it -->
     <VideosBoard class="h-90vh max-w-300" :videos="videos" />
   </div>
 </template>

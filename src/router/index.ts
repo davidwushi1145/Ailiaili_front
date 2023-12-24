@@ -7,7 +7,7 @@ import RcmdVideosView from '@/views/RcmdVideosView.vue'
 import PopularVideosView from '@/views/PopularVideosView.vue'
 import DynamicFeedView from '@/views/DynamicFeedView.vue'
 import HistoryVideosView from '@/views/HistoryVideosView.vue'
-import UploadVideoView from "@/views/UploadVideoView.vue";
+
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -77,9 +77,8 @@ const router = createRouter({
       name: 'Logout',
       redirect: '',
       beforeEnter: async (_from, _to, next) => {
-        const { fetchData } = userStore()
+        userStore().deleteData()
         await logout()
-        await fetchData()
         next('/home')
       },
     },

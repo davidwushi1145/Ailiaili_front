@@ -12,7 +12,7 @@ function goToLoginPage() {
   <div>
     <Popover class="relative">
       <PopoverButton as="div" class="w-10 h-10 overflow-hidden rounded-full p0 active:(border-1 border-blue-400 border-solid) box-border" @click="goToLoginPage">
-        <Avatar :avatar-url="userInfo.face ?? ''" />
+        <Avatar :avatar-url="userInfo.isLogin ? userInfo.face : ''" />
       </PopoverButton>
       <PopoverOverlay v-if="!userInfo.isLogin" class="fixed inset-0 z-25 bg-black opacity-30" />
       <Transition
