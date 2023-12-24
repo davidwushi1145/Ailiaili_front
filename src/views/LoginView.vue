@@ -48,6 +48,9 @@ async function login() {
     if (res.code === '200') {
       // 将 token 保存在 OpenAPI 对象中
       OpenAPI.TOKEN = res.data
+
+      //存储token
+      localStorage.setItem('token',res.data)
       // 登录成功后，获取并设置用户信息
       await userStore().fetchData()
       await router.push({ path: '/home' })

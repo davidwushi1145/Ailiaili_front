@@ -7,7 +7,7 @@ import RcmdVideosView from '@/views/RcmdVideosView.vue'
 import PopularVideosView from '@/views/PopularVideosView.vue'
 import DynamicFeedView from '@/views/DynamicFeedView.vue'
 import HistoryVideosView from '@/views/HistoryVideosView.vue'
-
+import UploadVideoView from "@/views/UploadVideoView.vue";
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
@@ -82,6 +82,11 @@ const router = createRouter({
         await fetchData()
         next('/home')
       },
+    },
+    {
+      path: '/uploadVideo',
+      name: 'UploadVideo',
+      component: () => import('@/views/UploadVideoView.vue'),
     },
   ],
 })
