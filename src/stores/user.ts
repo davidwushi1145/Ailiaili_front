@@ -52,7 +52,7 @@ export const userStore = defineStore('user', () => {
     }
   }
 
-  const deleteData = () => {
+  const deleteData = async () => {
     userInfo.value = DEFAULT
   }
 

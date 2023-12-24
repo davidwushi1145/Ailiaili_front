@@ -1,13 +1,19 @@
 <script setup lang="ts">
+import type { ReplyApi } from 'undraw-ui/dist/components/comment/interface'
+
 // import type { Video } from '@/utils/api'
 import type { Ref } from 'vue'
+import type { CommentApi, ConfigApi, SubmitParamApi } from 'undraw-ui'
+import { UToast, createObjectURL, dayjs } from 'undraw-ui'
 import {
   DanmuApiService,
   UserFollowingApiService,
   type UserInfo,
   type Video,
-  VideoApiService,
+  VideoApiService, type VideoComment,
 } from '../../generated'
+import { userStore } from '@/stores/user'
+import emoji from '@/asset/emoji'
 import type { Reply } from '@/utils/getReply'
 
 const route = useRoute()
@@ -59,6 +65,124 @@ useInfiniteScroll(
     distance: 300,
   },
 )
+
+const config = reactive<ConfigApi>({
+  user: {
+    id: 1,
+    username: userStore().userInfo.uname,
+    avatar: userStore().userInfo.face,
+    // 评论id数组 建议:存储方式用户uid和评论id组成关系,根据用户uid来获取对应点赞评论id,然后加入到数组中返回
+    likeIds: [1, 2, 3],
+  },
+  emoji,
+  comments: [],
+  total: 10,
+})
+
+let temp_id = 100
+// 提交评论事件
+async function submit({ content, parentId, files, finish, reply }: SubmitParamApi) {
+  /**
+   * 上传文件后端返回图片访问地址，格式以'||'为分割; 如:  '/static/img/program.gif||/static/img/normal.webp'
+   */
+  const contentImg = files?.map(e => createObjectURL(e)).join('||')
+
+  temp_id += 1
+  const comment: CommentApi = {
+    id: String(temp_id),
+    parentId,
+    uid: config.user.id,
+    address: '来自昆明',
+    content,
+    likes: 0,
+    createTime: dayjs().subtract(5, 'seconds').toString(),
+    contentImg,
+    user: {
+      username: config.user.username,
+      avatar: config.user.avatar,
+      level: 5,
+      homeLink: `/${(temp_id)}`,
+    },
+    reply: null,
+  }
+
+  const videoComment: Ref<VideoComment> = ref({
+    childList: undefined,
+    comment: content,
+    createTime: undefined,
+    id: undefined,
+    replyUserId: undefined,
+    replyUserInfo: undefined,
+    rootId: parentId === null ? undefined : Number(parentId),
+    updateTime: undefined,
+    userId: undefined,
+    userInfo: undefined,
+    videoId: Number(aid.value),
+  })
+  await VideoApiService.addVideoCommentsUsingPost(videoComment.value)
+
+  setTimeout(() => {
+    finish(comment)
+    UToast({ message: '评论成功!', type: 'info' })
+  }, 200)
+}
+// 点赞按钮事件 将评论id返回后端判断是否点赞，然后在处理点赞状态
+function like(id: string, finish: () => void) {
+  setTimeout(() => {
+    finish()
+  }, 200)
+}
+onMounted(async () => {
+  config.comments = []
+  const res = await VideoApiService.pageListVideoCommentsUsingGet(1, 1000, Number(aid.value))
+  const rootList: Array<VideoComment> | undefined = res.data?.list
+  for (const item of rootList) {
+    const replyApi: Ref<ReplyApi> = ref({
+      total: 0,
+      list: [],
+    })
+    const temp: Ref<CommentApi> = ref({
+      id: item.id,
+      parentId: item.rootId,
+      uid: item.userId,
+      address: '来自昆明',
+      content: item.comment,
+      likes: 3,
+      contentImg: undefined,
+      createTime: item.createTime,
+      user: {
+        username: item.userInfo?.nick,
+        avatar: item.userInfo?.avatar,
+        level: 5,
+        homeLink: '/1',
+      },
+      reply: replyApi.value,
+    })
+    if (item.childList !== undefined) {
+      for (const item1 of item.childList) {
+        const temp1: Ref<CommentApi> = ref({
+          id: item1.id,
+          parentId: item1.rootId,
+          uid: item1.userId,
+          address: '来自昆明',
+          content: item1.comment,
+          likes: 3,
+          contentImg: undefined,
+          createTime: item1.createTime,
+          user: {
+            username: item1.userInfo?.nick,
+            avatar: item1.userInfo?.avatar,
+            level: 5,
+            homeLink: '/1',
+          },
+          reply: null,
+        })
+        temp.value.reply?.list.push(temp1.value)
+      }
+    }
+    config.comments.push(temp.value)
+  }
+})
 </script>
 
 <template>
@@ -107,11 +231,12 @@ useInfiniteScroll(
       </ElScrollbar>
     </div>
     <Divider class="hidden xl:(w-full max-w-400 flex)" />
-    <div v-infinite-scroll="loadmore" :infinite-scroll-immediate="false" class="w-full mt4 xl:max-w-400">
-      <Comments v-for="(reply, index) in replies" :key="index" class="mt4" :reply="reply" />
-      <div v-show="isLoading" class="w-full text-center">
-        <span class="text-xl text-orange-400 animate-flash animate-count-infinte">Loading...</span>
-      </div>
-    </div>
+    <!--    <div v-infinite-scroll="loadmore" :infinite-scroll-immediate="false" class="w-full mt4 xl:max-w-400"> -->
+    <!--      <Comments v-for="(reply, index) in replies" :key="index" class="mt4" :reply="reply" /> -->
+    <!--      <div v-show="isLoading" class="w-full text-center"> -->
+    <!--        <span class="text-xl text-orange-400 animate-flash animate-count-infinte">Loading...</span> -->
+    <!--      </div> -->
+    <!--    </div> -->
   </div>
+  <u-comment class="ml-0 w-50vw" :config="config" relative-time @submit="submit" @like="like" />
 </template>
