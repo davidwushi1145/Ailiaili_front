@@ -58,4 +58,6 @@ export const userStore = defineStore('user', () => {
     userInfo,
     fetchData,
   }
+}, {
+  persist: true,
 })
