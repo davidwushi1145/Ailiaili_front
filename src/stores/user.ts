@@ -52,12 +52,20 @@ export const userStore = defineStore('user', () => {
     }
   }
 
+  const deleteData = () => {
+    userInfo.value = DEFAULT
+  }
+
   fetchData()
+  deleteData()
 
   return {
     userInfo,
     fetchData,
+    deleteData,
   }
 }, {
-  persist: true,
+  persist: {
+    key: 'user',
+  },
 })
