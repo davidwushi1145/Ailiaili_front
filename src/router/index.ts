@@ -92,6 +92,11 @@ const router = createRouter({
       name: 'EditUserInfo',
       component: () => import('@/views/EditUserInfoView.vue'),
     },
+    {
+      path: '/managePlatform',
+      name: 'ManagePlatform',
+      component: () => import('@/views/ManagePlatformView.vue'),
+    },
   ],
 })
 

@@ -40,7 +40,10 @@ function routeGoWithClose(path: string) {
       <span>LV{{ userInfo.level_info.current_level + 1 }}</span>
     </div>
     <Divider class="my-4" />
-
+    <div class="flex flex-row items-center justify-start text-black rounded-md p2 cursor-pointer hover:(bg-light bg-opacity-70) active:(bg-light bg-opacity-70)" @click="routeGoWithClose('/managePlatform')">
+      <div class="w-5 h-5 i-lucide:log-out" />
+      <span class="float-right ml-2">平台管理</span>
+    </div>
     <div class="flex flex-row items-center justify-start text-black rounded-md p2 cursor-pointer hover:(bg-light bg-opacity-70) active:(bg-light bg-opacity-70)" @click="routeGoWithClose('/uploadVideo')">
       <div class="w-5 h-5 i-lucide:log-out" />
       <span class="float-right ml-2">上传视频</span>
