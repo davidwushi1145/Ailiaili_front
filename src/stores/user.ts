@@ -52,10 +52,11 @@ export const userStore = defineStore('user', () => {
     }
   }
 
-  const deleteData = async () => {
-    userInfo.value = DEFAULT
+  const deleteData = () => {
+    userInfo.value = { ...DEFAULT } // 使用展开运算符确保创建新的对象
+    // eslint-disable-next-line no-console
+    console.log('User info after deleteData:', userInfo.value)
   }
-
   fetchData()
   deleteData()
 
