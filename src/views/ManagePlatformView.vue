@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import type {Danmu, User} from "../../generated";
-import { DanmuApiService,  UserApiService} from "../../generated";
+import {DanmuApiService, UserApiService, UserAuthApiService} from "../../generated";
 import {onMounted, ref,reactive} from "vue";
 const size = ref('')
 const iconStyle = computed(() => {
@@ -19,16 +19,25 @@ const danmus = reactive<Danmu[]>([])
 
 const users = reactive<User[]>([])
 
+const selectedUser = ref<User>({
+  createTime: undefined,
+  email: undefined,
+  id: undefined,
+  phone: undefined,
+  salt: undefined,
+  updateTime: undefined,
+  userInfo: undefined,
+  userPassword: undefined,
+})
 
 const fetchDanMu = async()=>{
 
   try {
 
     const response = await DanmuApiService.getUnpassDanmusUsingGet(1,100);
-
-    danmus.splice(0,danmus.length,...response.data.list)
-    // danmus1.value = response.data.list;
+        danmus.splice(0,danmus.length, ...response.data.list)
     console.log("danmu",response);
+    // console.log("userInfo",response1);
   }catch (error){
     console.error(error);
   }
@@ -38,9 +47,10 @@ const fetchUser = async()=>{
 
   try {
 
-    const response = await UserApiService.getUserInfoUsingGet();
+    const response = await UserApiService.getAllUserUsingGet();
     users.splice(0,users.length,...response.data)
-    // danmus1.value = response.data.list;
+
+
     console.log("user",response.data);
   }catch (error){
     console.error(error);
@@ -52,6 +62,27 @@ const passDanmu = async(danmuId:any)=>{
 
     await DanmuApiService.passDanmuUsingPost(danmuId).then(()=>fetchDanMu())
     // location.reload()
+  }catch (error){
+    console.error(error);
+  }
+
+}
+
+const update = async (user: any)=>{
+  try {
+    selectedUser.value = user;
+
+    const response = await UserApiService.updateSignificantUserUsingPut(user)
+    console.log("修改用户",response.data);
+  }catch (error){
+    console.error(error);
+  }
+
+}
+const text = async ()=>{
+  try {
+   const response = await UserAuthApiService.getUserAuthoritiesUsingGet();
+    console.log("权限",response.data);
   }catch (error){
     console.error(error);
   }
@@ -186,10 +217,10 @@ onMounted(async () => {
                           <el-icon :style="iconStyle">
                             <ChatLineSquare />
                           </el-icon>
-                          用户昵称
+                          用户名
                         </div>
                       </template>
-                      {{ user.createTime }}
+                      {{ user.phone }}
                     </el-descriptions-item>
 
                     <el-descriptions-item>
@@ -203,6 +234,8 @@ onMounted(async () => {
                       </template>
                       {{ user.createTime}}
                     </el-descriptions-item>
+
+
                     <el-descriptions-item>
                       <template #label>
                         <div class="cell-item">
@@ -212,9 +245,10 @@ onMounted(async () => {
                           当前状态
                         </div>
                       </template>
-                      <el-select  placeholder="禁用" style="width: 100px">
-                        <el-option label="禁用" value="0" />
-                        <el-option label="允许" value="1" />
+<!--                      {{ user.pass === 0 ? '冻结状态' : '解冻状态' }}-->
+                      <el-select  v-model="user.pass" placeholder="禁用" style="width: 100px">
+                        <el-option label="冻结" value="0" />
+                        <el-option label="解冻" value="1" />
                       </el-select>
                     </el-descriptions-item>
                     <el-descriptions-item>
@@ -227,7 +261,7 @@ onMounted(async () => {
                         </div>
                       </template>
                       <el-input
-
+                          v-model="user.userPassword"
                           type="password"
                           placeholder="Please input password"
                           show-password
@@ -236,15 +270,60 @@ onMounted(async () => {
                   </el-descriptions>
 
                   <div class="submit">
-                    <el-button type="primary" >修改</el-button>
+                    <el-button type="primary"  @click="update(user)">修改</el-button>
                   </div>
 
                   <el-divider />
                 </div>
                 </el-tab-pane>
-              <el-tab-pane label="权限管理" name="third">
-                权限管理
-                <el-icon><SwitchButton /></el-icon></el-tab-pane>
+
+
+<!--              <el-tab-pane label="权限管理" name="third">-->
+
+<!--                <div class="userAuths">-->
+
+<!--                  <el-descriptions-->
+<!--                      class="margin-top"-->
+<!--                      title="用户权限"-->
+<!--                      :column="3"-->
+<!--                      :size="size"-->
+<!--                      border-->
+<!--                  >-->
+<!--                    <el-descriptions-item>-->
+<!--                      <template #label>-->
+<!--                        <div class="cell-item">-->
+<!--                          <el-icon :style="iconStyle">-->
+<!--                            <user />-->
+<!--                          </el-icon>-->
+<!--                          用户id-->
+<!--                        </div>-->
+<!--                      </template>-->
+<!--                      kooriookami-->
+<!--                    </el-descriptions-item>-->
+<!--                    <el-descriptions-item>-->
+<!--                      <template #label>-->
+<!--                        <div class="cell-item">-->
+<!--                          <el-icon :style="iconStyle">-->
+<!--                            <iphone />-->
+<!--                          </el-icon>-->
+<!--                          用户拥有的权限-->
+<!--                        </div>-->
+<!--                      </template>-->
+<!--                      18100000000-->
+<!--                    </el-descriptions-item>-->
+
+<!--                  </el-descriptions>-->
+
+<!--                  <div class="submit">-->
+<!--                    <el-button type="primary" >修改</el-button>-->
+<!--                  </div>-->
+
+
+<!--                  <el-button type="primary" @click="text">测试</el-button>-->
+<!--                  <el-divider />-->
+
+<!--                </div>-->
+<!--              </el-tab-pane>-->
             </el-tabs>
           </div>
 
