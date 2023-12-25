@@ -52,12 +52,30 @@ export const userStore = defineStore('user', () => {
     }
   }
 
-  const deleteData = () => {
-    userInfo.value = DEFAULT
+  const deleteData = async () => {
+    userInfo.value = {
+      isLogin: false,
+      face: '',
+      uname: '',
+      level_info: {
+        current_level: 0,
+        current_min: 0,
+        current_exp: 0,
+        next_exp: 0,
+      },
+      mid: 0,
+      money: 0,
+      following: 0,
+      follower: 0,
+      dynamic_count: 0,
+      moral: 0,
+    }
+    await nextTick()
+    // eslint-disable-next-line no-console
+    console.log('User info after deleteData:', userInfo.value)
   }
-
-  fetchData()
-  deleteData()
+  // fetchData()
+  // deleteData()
 
   return {
     userInfo,
@@ -66,6 +84,6 @@ export const userStore = defineStore('user', () => {
   }
 }, {
   persist: {
-    key: 'user',
+    paths: ['userInfo'], // 持久化 userInfo 状态
   },
 })

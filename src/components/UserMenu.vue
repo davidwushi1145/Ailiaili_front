@@ -21,6 +21,10 @@ function routeGoWithClose(path: string) {
   if (props.callback)
     props.callback()
 }
+const handleLogout = async () => {
+  await logout();
+  await router.push('/logout'); // 假设登录页面的路由是 '/login'
+};
 </script>
 
 <template>
@@ -52,9 +56,9 @@ function routeGoWithClose(path: string) {
       <div class="w-5 h-5 i-lucide:log-out" />
       <span class="float-right ml-2">个人中心</span>
     </div>
-    <div class="flex flex-row items-center justify-start text-black rounded-md p2 cursor-pointer hover:(bg-light bg-opacity-70) active:(bg-light bg-opacity-70)" @click="routeGoWithClose('/logout')">
+    <div class="flex flex-row items-center justify-start text-black rounded-md p2 cursor-pointer hover:(bg-light bg-opacity-70) active:(bg-light bg-opacity-70)" @click="handleLogout">
       <div class="w-5 h-5 i-lucide:log-out" />
-      <span class="float-right ml-2">Logout</span>
+      <span class="float-right ml-2">退出</span>
     </div>
 
 

@@ -11,6 +11,7 @@ import HistoryVideosView from '@/views/HistoryVideosView.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [
+    { path: '/', redirect: '/home' },
     {
       path: '/home',
       name: 'Home',
@@ -77,7 +78,7 @@ const router = createRouter({
       name: 'Logout',
       redirect: '',
       beforeEnter: async (_from, _to, next) => {
-        userStore().deleteData()
+        await userStore().deleteData()
         await logout()
         next('/home')
       },
