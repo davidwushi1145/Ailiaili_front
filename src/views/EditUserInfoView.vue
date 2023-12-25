@@ -95,7 +95,7 @@ const save = async()=>{
   }
 }
 const file1 = ref();
-const md51 = ref('11');
+const md51 = ref('');
 
 const avatar = ref();
 const beforeUpload = async (file:any) => {
@@ -124,13 +124,13 @@ const beforeUpload = async (file:any) => {
     // 以ArrayBuffer形式读取文件内容
     reader.readAsArrayBuffer(file);
 
+    const resMd5 = await FileApiService.getFileMd5UsingPost(file1.value);
+    md51.value = resMd5.data
 
     const response =  await FileApiService.uploadThumbnailFileUsingPut(
         file1.value,
         md51.value,
-
     )
-
 
     avatar.value = response.data
     userInfo.value.avatar = avatar.value;
@@ -147,6 +147,7 @@ const update = async()=>{
 
 try {
   await UserApiService.updateUserInfosUsingPut(userInfo.value);
+  await userStore().fetchData()
   alert("修改成功")
 }catch (error)
 {

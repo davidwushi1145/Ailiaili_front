@@ -38,7 +38,7 @@ export async function getUserInfo() {
   const res = ref<UserInfo>({
     isLogin: flag.value,
     face: user.data?.userInfo?.avatar as string,
-    uname: user.data?.userInfo?.sign as string,
+    uname: user.data?.userInfo?.nick as string,
     level_info: {
       current_level: 5,
       current_min: 1000,
