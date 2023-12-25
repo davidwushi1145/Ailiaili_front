@@ -77,7 +77,7 @@ const router = createRouter({
       name: 'Logout',
       redirect: '',
       beforeEnter: async (_from, _to, next) => {
-        userStore().deleteData()
+        await userStore().deleteData()
         await logout()
         next('/home')
       },
