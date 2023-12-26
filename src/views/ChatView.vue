@@ -26,6 +26,11 @@ async function sendMessage() {
   if (res.data !== undefined)
     messages.value = res.data
 }
+
+function formatTime(time: string) {
+  const date = new Date(time);
+  return date.toUTCString();
+}
 </script>
 
 <template>
@@ -39,6 +44,7 @@ async function sendMessage() {
     <template #Main>
       <div class="flex justify-center items-center">
         <img :src="userInfo.avatar" class="w-10 h-10 r">
+        <div>&nbsp;&nbsp;&nbsp;</div>
         <div>{{userInfo.nick}}</div>
       </div>
       <hr>
@@ -47,22 +53,22 @@ async function sendMessage() {
         <div v-if="userInfo.id === message.senderId" class="flex">
           <img :src="userInfo.avatar" class="w-15 h-15 r" alt="">
           <div class="ml-5">
-            <div>
+            <div class="message-box">
               {{message.message}}
             </div>
             <div class="mt-4">
-              {{message.sendTime}}
+              {{formatTime(message.sendTime)}}
             </div>
           </div>
         </div>
         <div v-else class="flex">
           <img :src="currentUser.face" class="w-15 h-15 r" alt="">
           <div class="ml-5">
-            <div>
+            <div class="message-box">
               {{message.message}}
             </div>
             <div class="mt-4">
-              {{message.sendTime}}
+              {{formatTime(message.sendTime)}}
             </div>
           </div>
         </div>
@@ -86,5 +92,11 @@ async function sendMessage() {
 </template>
 
 <style scoped lang="scss">
-
+.message-box {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
 </style>

@@ -88,6 +88,7 @@ const save = async()=>{
 
     console.log("更新userInfo",response2);
     alert("修改成功")
+    await userStore().fetchData()
   }catch (error)
   {
     console.error("保存用户信息失败",error)
