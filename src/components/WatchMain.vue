@@ -204,6 +204,7 @@ onMounted(async () => {
   }
 })
 function toAd (){
+  AdvertisementApiService.clickAdvertisementUsingPost(adInfo.value.aid)
   const l = 'https://' + adInfo.value.advertisementPath
   window.open(l, '_blank');
 }

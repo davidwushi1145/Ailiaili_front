@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import router from "@/router";
 import {ref,reactive} from "vue";
 import type {UserInfo, Video} from "../../generated";
 import SparkMD5 from 'spark-md5';
@@ -34,12 +35,12 @@ const video = ref<Video>({
 const userInfo = ref<UserInfo | null>(null)
 //封面
 const file1 = ref();
-const md51 = ref('11');
+const md51 = ref('');
 const fmUrl = ref();
 
 //视频
 const file2 = ref();
-const md52 = ref('11');
+const md52 = ref('');
 const videoUrl = ref();
 
 const form = ref({
@@ -59,37 +60,20 @@ const beforeUpload1 = async (file:any) => {
     console.log('用户上传的封面:', file);
     file1.value = file;
 
-    // 创建一个FileReader对象
-    const reader = new FileReader();
-
-    // 当文件读取完成时触发事件
-    reader.onload = () => {
-
-        // 获取文件内容
-        const fileContent = reader.result as ArrayBuffer;
-
-        // 计算MD5值
-        const spark = new SparkMD5.ArrayBuffer();
-        spark.append(fileContent);
-
-      // 将MD5值保存到ref
-        md51.value = spark.end(true);// 注意这里传递了 true 表示以十六进制字符串的形式返回
-
-    };
-
-    // 以ArrayBuffer形式读取文件内容
-    reader.readAsArrayBuffer(file);
-
+    const resMD5 = await FileApiService.getFileMd5UsingPost(file1.value)
+    md51.value = resMD5.data
 
     const response =  await FileApiService.uploadThumbnailFileUsingPut(
         file1.value,
         md51.value,
-
     )
 
     fmUrl.value = response.data
 
-    console.log("fmurl：",fmUrl.value)
+    ElMessage({
+      message: '上传封面成功',
+      type: 'success',
+    })
   } catch (error) {
     console.error('上传失败', error);
     throw error; // 将错误抛出，以便外部捕获
@@ -104,36 +88,22 @@ const beforeUpload2 = async (file:any) => {
     console.log('用户上传的视频:', file);
     file2.value = file;
 
-    // 创建一个FileReader对象
-    const reader = new FileReader();
+    const resMD5 = await FileApiService.getFileMd5UsingPost(file2.value)
+    md52.value = resMD5.data
 
-    // 当文件读取完成时触发事件
-    reader.onload = () => {
-
-      // 获取文件内容
-      const fileContent = reader.result as ArrayBuffer;
-
-      // 计算MD5值
-      const spark = new SparkMD5.ArrayBuffer();
-      spark.append(fileContent);
-
-      // 将MD5值保存到ref
-      md52.value = spark.end(true);// 注意这里传递了 true 表示以十六进制字符串的形式返回
-
-    };
-
-    // 以ArrayBuffer形式读取文件内容
-    reader.readAsArrayBuffer(file);
-
-
-    const response =  await FileApiService.uploadThumbnailFileUsingPut(
-        file2.value,
+    const response =  await FileApiService.uploadFileBySlicesUsingPut(
         md52.value,
+        file2.value,
+        1,
+        1,
     )
 
     videoUrl.value = response.data
 
-    console.log("videoUrl：",videoUrl.value)
+    ElMessage({
+      message: '上传视频成功',
+      type: 'success',
+    })
   } catch (error) {
     console.error('上传失败', error);
     throw error; // 将错误抛出，以便外部捕获
@@ -182,7 +152,11 @@ async function fillVideo() {
     form.value.description += " ";
 
     const response = await VideoApiService.addVideosUsingPost(video.value);
-    console.log(response);
+    ElMessage({
+      message: '上传视频成功',
+      type: 'success',
+    })
+    await router.push('/home')
   }catch (error){
     console.error(error);
   }
