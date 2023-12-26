@@ -44,13 +44,15 @@ async function login() {
     }
     user.value.userPassword = encryptedPassword
 
-    const res = await UserApiService.loginUsingPost(user.value)
+    const res = await UserApiService.loginForDtsUsingPost(user.value)
     if (res.code === '200') {
       // 将 token 保存在 OpenAPI 对象中
-      OpenAPI.TOKEN = res.data
-
-      //存储token
-      localStorage.setItem('token',res.data)
+      const { accessToken, refreshToken } = res.data;
+      // 使用 OpenAPI.TOKEN 存储访问令牌
+      OpenAPI.TOKEN = accessToken;
+      // 使用 localStorage 存储 access_token 和 refresh_token
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
       // 登录成功后，获取并设置用户信息
       await userStore().fetchData()
       await router.push({ path: '/home' })
