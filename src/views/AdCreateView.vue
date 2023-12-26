@@ -1,4 +1,12 @@
 <script setup lang="ts">
+withDefaults(
+    defineProps<{
+      showDarwerButton?: boolean
+    }>(), {
+      showDarwerButton: false,
+    },
+)
+const { showDarwer } = storeToRefs(navStore())
 
 import router from "@/router";
 import {h} from 'vue'
@@ -76,10 +84,17 @@ async function onSubmit() {
   })
   form.value = DF.value
   const res = await AdvertisementApiService.buyAdvertisementSpaceUsingPost(params.value)
+  console.log(res.code)
   if (res.code === 200) {
     ElMessage({
       message: '购买广告位投放广告成功',
       type: 'success',
+    })
+    await router.push('/home')
+  }else {
+    ElMessage({
+      message: '购买广告位投放广告失败',
+      type: 'error',
     })
   }
 }
