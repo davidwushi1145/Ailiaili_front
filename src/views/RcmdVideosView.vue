@@ -77,7 +77,8 @@ onMounted(async () => {
     })
   }
 })
-function toAd (url: string){
+function toAd (url: string, aid: number){
+  AdvertisementApiService.clickAdvertisementUsingPost(aid)
   const l = 'https://' + url
   window.open(l, '_blank');
 }
@@ -87,7 +88,7 @@ function toAd (url: string){
   <div class="block text-center">
     <el-carousel height="200px">
       <el-carousel-item v-for="item in list" :key="item">
-        <img :src="item.imgSrc" @click="toAd(item.advertisementPath)" />
+        <img :src="item.imgSrc" @click="toAd(item.advertisementPath,item.aid)" />
       </el-carousel-item>
     </el-carousel>
   </div>
