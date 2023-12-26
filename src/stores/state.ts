@@ -1,5 +1,4 @@
-import DynamicIconVue from '@/components/atoms/icons/DynamicIcon.vue'
-import HistoryIconVue from '@/components/atoms/icons/HistoryIcon.vue'
+import AdIcon from '@/components/atoms/icons/AdIcon.vue'
 import HomeIconVue from '@/components/atoms/icons/HomeIcon.vue'
 import PopularIconVue from '@/components/atoms/icons/PopularIcon.vue'
 
@@ -14,15 +13,20 @@ export const ASIDE_MENU = [
     icon: markRaw(PopularIconVue),
     to: '/popular',
   },
+  // {
+  //   title: '关注动态',
+  //   icon: markRaw(DynamicIconVue),
+  //   to: '/dynamic',
+  // },
+  // {
+  //   title: '历史记录',
+  //   icon: markRaw(HistoryIconVue),
+  //   to: '/history',
+  // },
   {
-    title: '关注动态',
-    icon: markRaw(DynamicIconVue),
-    to: '/dynamic',
-  },
-  {
-    title: '历史记录',
-    icon: markRaw(HistoryIconVue),
-    to: '/history',
+    title: '广告投放平台',
+    icon: markRaw(AdIcon),
+    to: 'ad-create',
   },
 ]
 
