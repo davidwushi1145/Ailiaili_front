@@ -47,7 +47,8 @@ async function login() {
     const res = await UserApiService.loginForDtsUsingPost(user.value)
     if (res.code === '200') {
       // 将 token 保存在 OpenAPI 对象中
-      const { accessToken, refreshToken } = res.data;
+      const accessToken = res.data.accessToken;
+      const refreshToken = res.data.refreshToken;
       // 使用 OpenAPI.TOKEN 存储访问令牌
       OpenAPI.TOKEN = accessToken;
       // 使用 localStorage 存储 access_token 和 refresh_token

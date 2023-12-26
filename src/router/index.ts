@@ -103,6 +103,12 @@ const router = createRouter({
       name: 'AdCreate',
       component: () => import('@/views/AdCreateView.vue'),
     },
+    {
+      path: '/chat/:mid',
+      name: 'Chat',
+      component: () => import('@/views/ChatView.vue'),
+      props: true,
+    },
   ],
 })
 

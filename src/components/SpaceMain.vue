@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import router from "@/router";
+import * as path from "path";
 import type { Ref } from 'vue'
 import {
   UserApiService,
@@ -47,6 +49,9 @@ async function addFollow() {
   if (res3.data !== undefined)
     isFollow.value = res3.data
 }
+function toSend() {
+  router.push({path: `/chat/${userInfo.value.id}`})
+}
 </script>
 
 <template>
@@ -57,7 +62,8 @@ async function addFollow() {
         <span class="text-xl">{{ userInfo?.nick }}</span>
         <span class="text-lg text-gray-600 opacity-40 line-clamp-1">{{ userInfo?.sign }}</span>
       </div>
-      <div class="ml-10" @click="addFollow">
+      <el-button type="primary" class="ml-4" @click="toSend">发送消息</el-button>
+      <div class="ml-7" @click="addFollow">
         <img v-if="isFollow" src="../asset/已关注.png" alt="">
         <img v-else src="../asset/关注.png" alt="">
       </div>
