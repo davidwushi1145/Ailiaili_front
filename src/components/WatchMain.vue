@@ -6,7 +6,8 @@ import type { Ref } from 'vue'
 import type { CommentApi, ConfigApi, SubmitParamApi } from 'undraw-ui'
 import { UToast, createObjectURL, dayjs } from 'undraw-ui'
 import {
-  DanmuApiService,
+  AdvertisementApiService,
+  DanmuApiService, FileApiService,
   UserFollowingApiService,
   type UserInfo,
   type Video,
@@ -183,6 +184,29 @@ onMounted(async () => {
     config.comments.push(temp.value)
   }
 })
+const isHaveAd = ref(false)
+const adInfo = ref({
+  aid: 0,
+  advertisementPath: '',
+  imgSrc: '',
+})
+onMounted(async () => {
+  const res = await AdvertisementApiService.getAdvertisementUsingGet(Number(aid.value))
+  if(res.data !== undefined && res.data.id !== undefined){
+    await AdvertisementApiService.impressionsAdvertisementUsingPost(res.data.id)
+    adInfo.value.aid = res.data.id
+    if (res.data.advertisementPath != null) {
+      adInfo.value.advertisementPath = res.data.advertisementPath
+    }
+    const res1 = await FileApiService.getFileAdvertisementUsingGet(res.data?.contentId)
+    adInfo.value.imgSrc = res1.data?.url as string
+    isHaveAd.value = true;
+  }
+})
+function toAd (){
+  const l = 'https://' + adInfo.value.advertisementPath
+  window.open(l, '_blank');
+}
 </script>
 
 <template>
@@ -231,12 +255,9 @@ onMounted(async () => {
       </ElScrollbar>
     </div>
     <Divider class="hidden xl:(w-full max-w-400 flex)" />
-    <!--    <div v-infinite-scroll="loadmore" :infinite-scroll-immediate="false" class="w-full mt4 xl:max-w-400"> -->
-    <!--      <Comments v-for="(reply, index) in replies" :key="index" class="mt4" :reply="reply" /> -->
-    <!--      <div v-show="isLoading" class="w-full text-center"> -->
-    <!--        <span class="text-xl text-orange-400 animate-flash animate-count-infinte">Loading...</span> -->
-    <!--      </div> -->
-    <!--    </div> -->
+  </div>
+  <div v-if="isHaveAd">
+    <img class="ml-20 h-200px w-50vw" @click="toAd" :src="adInfo.imgSrc">
   </div>
   <u-comment class="ml-0 w-50vw" :config="config" relative-time @submit="submit" @like="like" />
 </template>

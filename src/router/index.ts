@@ -98,6 +98,11 @@ const router = createRouter({
       name: 'ManagePlatform',
       component: () => import('@/views/ManagePlatformView.vue'),
     },
+    {
+      path: '/ad-create',
+      name: 'AdCreate',
+      component: () => import('@/views/AdCreateView.vue'),
+    },
   ],
 })
 
