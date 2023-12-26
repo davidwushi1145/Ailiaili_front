@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {UserAuthApiService, type UserAuthorities} from "../../generated";
+
 const props = defineProps<{
   callback?: (ref?: Ref | HTMLElement) => void
 }>()
@@ -14,6 +16,24 @@ const progress = computed(() => {
   else
     return current_exp / (current_exp + next_exp)
 })
+const userAuthorities: Ref<UserAuthorities | null> = ref(null);
+
+// Define elementCodes as a reactive property
+const elementCodes: Ref<string[] | null> = ref(null);
+
+onMounted(async () => {
+  const res = await UserAuthApiService.getUserAuthoritiesUsingGet()
+  if (res.data && res.data.roleElementOperationList) {
+    userAuthorities.value = res.data
+    elementCodes.value = res.data.roleElementOperationList
+        .map(operation => operation.authElementOperation?.elementCode)
+        .filter((code): code is string => code !== undefined);
+  }
+})
+
+const userHasManagePlatformPermission = computed(() => {
+  return elementCodes.value?.includes('adminAuth');
+});
 
 function routeGoWithClose(path: string) {
   router.push(path)
@@ -44,7 +64,7 @@ const handleLogout = async () => {
       <span>LV{{ userInfo.level_info.current_level + 1 }}</span>
     </div>
     <Divider class="my-4" />
-    <div class="flex flex-row items-center justify-start text-black rounded-md p2 cursor-pointer hover:(bg-light bg-opacity-70) active:(bg-light bg-opacity-70)" @click="routeGoWithClose('/managePlatform')">
+    <div class="flex flex-row items-center justify-start text-black rounded-md p2 cursor-pointer hover:(bg-light bg-opacity-70) active:(bg-light bg-opacity-70)" @click="routeGoWithClose('/managePlatform')" v-if="userHasManagePlatformPermission">
       <div class="w-5 h-5 i-lucide:log-out" />
       <span class="float-right ml-2">平台管理</span>
     </div>

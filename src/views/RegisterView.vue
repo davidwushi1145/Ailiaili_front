@@ -45,9 +45,12 @@ async function register() {
   user.value.userPassword = encryptedPassword
 
   const res = await UserApiService.addUserUsingPost(user.value)
-  if (res.code === '200')
-    await router.push({ path: '/login' })
+  if (res.code === '200'){
+    // eslint-disable-next-line no-console
+    alert('注册成功')
+    await router.push('/login')}
 }
+
 </script>
 
 <template>
