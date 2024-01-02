@@ -22,6 +22,7 @@ const userAuthorities: Ref<UserAuthorities | null> = ref(null);
 const elementCodes: Ref<string[] | null> = ref(null);
 
 onMounted(async () => {
+  await userStore().fetchData()
   const res = await UserAuthApiService.getUserAuthoritiesUsingGet()
   if (res.data && res.data.roleElementOperationList) {
     userAuthorities.value = res.data

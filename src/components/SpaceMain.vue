@@ -31,6 +31,7 @@ onMounted(async () => {
 async function addFollow() {
   if (isFollow.value) {
     await UserFollowingApiService.deleteFollowingUsingDelete(mid.value)
+    await userStore().fetchData()
   }
   else {
     const userFollowing: Ref<UserFollowing> = ref({
@@ -43,6 +44,7 @@ async function addFollow() {
       userInfo: undefined,
     })
     await UserFollowingApiService.addUserFollowingsUsingPost(userFollowing.value)
+    await userStore().fetchData()
   }
 
   const res3 = await UserFollowingApiService.getIsFollowUsingGet(mid.value)
