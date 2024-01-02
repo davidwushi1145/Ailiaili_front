@@ -9,7 +9,7 @@ export async function logout() {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
     // 调用 deleteData 来清空 Pinia store 中的用户信息
-    user.deleteData()
+    await user.deleteData()
     // console.log('User info after logout:', user.userInfo)
   }
 
