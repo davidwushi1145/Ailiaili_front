@@ -1,6 +1,9 @@
 # 基于vue3的仿bilibili前端
+
 ## 项目介绍
+
 本项目是基于vue3的仿bilibili前端，使用vue3全家桶+typescript+element-plus+axios+vue-router+vuex+sass+webpack等技术开发，实现了bilibili首页、登录、注册、视频详情页、个人中心、视频上传等功能。
+
 ## 项目启动方法
 
 ### 安装依赖
@@ -10,6 +13,7 @@ pnpm install
 ```
 
 ### 安装openapi
+
 ```sh
 pnpm add openapi-typescript-codegen --save-dev
 ```
